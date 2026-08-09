@@ -1,0 +1,37 @@
+{
+  "name": "五力壓力量測 · 產業結構診斷",
+  "short_name": "五力量測",
+  "description": "依 Porter 五力架構進行產業結構診斷，產出壓力羅盤、雷達圖與策略建議。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#E9EDEE",
+  "theme_color": "#1F5E6E",
+  "lang": "zh-Hant-TW",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

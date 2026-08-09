@@ -1,0 +1,787 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>五力壓力量測 · 產業結構診斷</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1F5E6E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="五力量測">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#E9EDEE;
+  --card:#FBFCFC;
+  --ink:#12303A;
+  --ink-soft:#5C7278;
+  --line:#C6D2D5;
+  --line-soft:#DDE5E6;
+  --accent:#1F5E6E;
+  --low:#2E7D6B;
+  --mid:#C08A1E;
+  --high:#B33D2E;
+  --serif:"Noto Serif TC",serif;
+  --sans:"Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono","Noto Sans TC",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:26px 26px;
+  -webkit-font-smoothing:antialiased;line-height:1.7}
+.wrap{max-width:940px;margin:0 auto;padding:28px 20px 72px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;margin:0 0 10px}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,5.4vw,44px);line-height:1.25;margin:0 0 14px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-weight:700;font-size:20px;margin:0 0 4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:26px 24px;
+  box-shadow:0 1px 0 var(--line),0 14px 30px -26px rgba(18,48,58,.5)}
+.lede{color:var(--ink-soft);font-size:15px;margin:0 0 22px;max-width:60ch}
+
+/* ---- 刻度式進度（signature） ---- */
+.gauge{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 22px}
+.ticks{display:flex;align-items:flex-end;gap:3px;height:26px;flex:1;margin-right:16px}
+.tick{width:100%;background:var(--line);height:8px;transition:height .18s ease,background .18s ease}
+.tick.done{background:var(--accent);height:12px}
+.tick.now{background:var(--mid);height:26px}
+.count{font-family:var(--mono);font-size:12px;color:var(--ink-soft);white-space:nowrap}
+.count b{color:var(--ink);font-size:16px}
+
+.qmeta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:3px 9px;border:1px solid var(--line);color:var(--ink-soft);border-radius:2px}
+.chip.force{border-color:var(--accent);color:var(--accent)}
+.driver{font-family:var(--mono);font-size:12px;color:var(--ink-soft);letter-spacing:.06em}
+.qtext{font-family:var(--serif);font-weight:700;font-size:clamp(19px,3.2vw,25px);line-height:1.55;margin:6px 0 22px}
+
+.opts{display:grid;gap:8px;margin:0 0 24px}
+.opt{display:flex;align-items:flex-start;gap:14px;width:100%;text-align:left;font:inherit;font-size:15px;
+  background:transparent;border:1px solid var(--line);border-radius:2px;padding:13px 15px;cursor:pointer;
+  transition:border-color .14s,background .14s,transform .12s}
+.opt:hover{border-color:var(--accent);background:#F2F6F6}
+.opt:focus-visible{outline:2px solid var(--mid);outline-offset:2px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:#EAF1F1;box-shadow:inset 3px 0 0 var(--accent)}
+.opt .num{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--line);
+  min-width:24px;height:24px;display:grid;place-items:center;border-radius:2px;flex:none;margin-top:1px}
+.opt[aria-pressed="true"] .num{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+input[type=text]{width:100%;font:inherit;font-size:17px;padding:12px 14px;border:1px solid var(--line);
+  border-radius:2px;background:#fff;color:var(--ink)}
+input[type=text]:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line-soft);padding-top:16px}
+.btn{font:inherit;font-size:14px;font-weight:500;padding:11px 22px;border-radius:2px;cursor:pointer;border:1px solid var(--accent);
+  background:var(--accent);color:#fff;transition:opacity .14s}
+.btn:hover{opacity:.86}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:disabled{opacity:.32;cursor:not-allowed}
+.btn:focus-visible{outline:2px solid var(--mid);outline-offset:2px}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:.05em}
+
+/* ---- 結果 ---- */
+.head-result{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;
+  border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
+.score-big{font-family:var(--mono);font-weight:600;font-size:58px;line-height:1;color:var(--ink)}
+.score-big span{font-size:20px;color:var(--ink-soft)}
+.verdict{font-family:var(--serif);font-weight:700;font-size:22px;margin:6px 0 2px}
+.meta-line{font-family:var(--mono);font-size:12px;color:var(--ink-soft);letter-spacing:.04em}
+
+.sect{margin:34px 0 0}
+.sect-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:16px}
+.sect-h .no{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.14em}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-soft);font-weight:500;border-bottom:1px solid var(--line)}
+td.n{font-family:var(--mono);font-weight:600;text-align:right;white-space:nowrap}
+.lv{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:2px;color:#fff;white-space:nowrap}
+
+.rec{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:0 0 20px}
+.rec h3{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.rec .diag{font-size:14px;color:var(--ink-soft);margin:0 0 8px}
+.rec ul{margin:0;padding-left:19px;font-size:14.5px}
+.rec li{margin-bottom:4px}
+.kpi{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:8px;letter-spacing:.02em}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;border-top:1px solid var(--line);padding-top:20px}
+svg{max-width:100%;height:auto;display:block}
+.charts{display:grid;gap:26px}
+@media(min-width:820px){.charts{grid-template-columns:1fr}}
+.note{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.03em}
+.hidden{display:none!important}
+.resume{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border:1px solid var(--mid);background:#FCF7EC;border-radius:2px;padding:13px 16px;margin:0 0 18px;font-size:14px}
+.case-a{font:inherit;font-size:13px;background:none;border:0;color:var(--accent);cursor:pointer;padding:2px 6px;text-decoration:underline}
+.case-a.del{color:var(--high)}
+#offline{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:#fff;font-family:var(--mono);
+  font-size:11px;text-align:center;padding:7px;z-index:9}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+table.acts{margin:6px 0 0;font-size:13.5px}
+table.acts th{font-size:10.5px}
+table.acts td.res{color:var(--ink-soft);font-size:13px}
+.sign-grid{display:grid;gap:20px 28px;grid-template-columns:1fr 1fr;margin-top:6px}
+.sign-f label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:5px}
+.sign-f input{width:100%;font:inherit;font-size:15px;padding:7px 2px;border:0;border-bottom:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:0}
+.sign-f input:focus{outline:0;border-bottom:2px solid var(--accent)}
+.sign-box{border:1px solid var(--line);border-radius:2px;padding:16px 18px;margin-top:22px}
+.sign-box .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--ink-soft)}
+.sign-line{height:44px;border-bottom:1px solid var(--ink);margin-top:10px}
+.ref{font-size:13.5px;color:var(--ink-soft);padding-left:20px;margin:0}
+.ref li{margin-bottom:5px}
+.disclaimer{border-left:3px solid var(--mid);padding:2px 0 2px 15px;font-size:13.5px;color:var(--ink-soft);margin-top:16px}
+.print-band{display:none}
+@media print{
+  .print-band{display:block;position:fixed;left:0;right:0;font-family:var(--mono);font-size:9.5px;
+    letter-spacing:.06em;color:var(--ink-soft)}
+  #print-head{top:-9mm;border-bottom:.6pt solid var(--ink);padding-bottom:2mm}
+  #print-foot{bottom:-9mm;border-top:.6pt solid var(--line);padding-top:2mm}
+  .print-band .r{float:right}
+  .pagebreak{break-before:page;page-break-before:always}
+  .sign-f input{border-bottom:.8pt solid #000}
+  table.acts{font-size:10.5pt}
+  body{font-size:10.5pt}
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .panel{border:none;box-shadow:none;padding:0}
+  .no-print{display:none!important}
+  .sect{break-inside:avoid;page-break-inside:avoid}
+  .rec{break-inside:avoid}
+  svg{max-height:none}
+  @page{size:A4 portrait;margin:22mm 15mm 20mm}
+}
+</style>
+
+<div class="print-band" id="print-head"><span id="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="r" id="ph-r"></span></div>
+<div class="print-band" id="print-foot"><span id="pf-l">機密文件 · 僅供受評單位與輔導單位內部使用</span><span class="r" id="pf-r"></span></div>
+<div class="wrap">
+
+<!-- ============ 封面 ============ -->
+<section id="s-intro" class="panel">
+  <p class="eyebrow">Industry Structure Diagnostic</p>
+  <h1>五力壓力量測</h1>
+  <p class="lede">依 Porter 五力架構，以 25 項驅動因子逐題量測產業結構壓力，產出壓力羅盤、雷達圖與策略建議。作答約 10 分鐘，資料僅存於本機。</p>
+  <table style="margin-bottom:22px">
+    <tr><th style="width:34%">量測構面</th><th>驅動因子</th><th style="width:12%">題數</th></tr>
+    <tr><td>新進入者威脅</td><td>規模經濟／資本投入／品牌轉換／通路取得／法規門檻</td><td class="n">5</td></tr>
+    <tr><td>供應商議價力</td><td>供應集中度／不可替代性／轉換成本／前向整合／採購份量</td><td class="n">5</td></tr>
+    <tr><td>買方議價力</td><td>客戶集中度／標準化／轉換成本／價格敏感／後向整合</td><td class="n">5</td></tr>
+    <tr><td>替代品威脅</td><td>性價比／轉換成本／跨業替代／接受意願／技術成熟度</td><td class="n">5</td></tr>
+    <tr><td>現有競爭強度</td><td>競爭均衡／市場成長／固定成本／差異化／退出障礙</td><td class="n">5</td></tr>
+    <tr><td colspan="2" style="font-weight:700">合計（含 5 題分析邊界設定）</td><td class="n" style="font-weight:700">30</td></tr>
+  </table>
+  <div id="resume-bar" class="resume hidden">
+    <span id="resume-txt"></span>
+    <span style="flex:none;display:flex;gap:8px">
+      <button class="btn" id="btn-resume">繼續作答</button>
+      <button class="btn ghost" id="btn-discard">捨棄草稿</button>
+    </span>
+  </div>
+  <div class="nav">
+    <span class="hint">評分方向：分數愈高＝該力對業者的壓力愈大</span>
+    <button class="btn" id="btn-start">開始新案件</button>
+  </div>
+  <div id="case-zone" class="hidden">
+    <div class="sect-h" style="margin-top:30px"><span class="no">FILE</span><h2>已儲存案件</h2></div>
+    <div id="case-list"></div>
+    <p class="note">案件僅儲存於本裝置瀏覽器，不會上傳；清除瀏覽器資料將一併移除。</p>
+  </div>
+</section>
+
+<!-- ============ 作答 ============ -->
+<section id="s-q" class="panel hidden">
+  <div class="gauge">
+    <div class="ticks" id="ticks"></div>
+    <div class="count"><b id="cur">1</b> / 30</div>
+  </div>
+  <div class="qmeta">
+    <span class="chip force" id="q-force">分析邊界</span>
+    <span class="driver" id="q-driver"></span>
+  </div>
+  <p class="qtext" id="q-text"></p>
+  <div class="opts" id="q-opts"></div>
+  <div class="nav">
+    <button class="btn ghost" id="btn-prev">上一題</button>
+    <span class="hint" id="q-hint">按數字鍵 1–5 可快速作答</span>
+    <button class="btn" id="btn-next">下一題</button>
+  </div>
+</section>
+
+<!-- ============ 結果 ============ -->
+<section id="s-result" class="panel hidden">
+  <p class="eyebrow">Porter's Five Forces · 診斷結果</p>
+  <div class="head-result">
+    <div>
+      <h1 style="font-size:30px;margin-bottom:6px" id="r-title">產業結構診斷報告</h1>
+      <p class="meta-line" id="r-meta"></p>
+    </div>
+    <div style="text-align:right">
+      <div class="score-big"><span id="r-index">0.0</span><span> / 5.0</span></div>
+      <div class="meta-line">產業吸引力指數</div>
+    </div>
+  </div>
+  <p class="verdict" id="r-verdict"></p>
+  <p class="lede" id="r-verdict-desc" style="margin-bottom:0"></p>
+
+  <div class="sect pagebreak">
+    <div class="sect-h"><span class="no">01</span><h2>五力壓力羅盤</h2></div>
+    <div id="chart-forces"></div>
+    <p class="note">箭頭粗細與色彩對應壓力強度；中央為現有競爭強度，四方為其餘四力。</p>
+  </div>
+
+  <div class="sect">
+    <div class="sect-h"><span class="no">02</span><h2>壓力強度雷達圖</h2></div>
+    <div id="chart-radar"></div>
+    <p class="note">虛線環為判讀門檻：內環 2.5（中度起點）、外環 3.5（高壓力起點）。</p>
+  </div>
+
+  <div class="sect">
+    <div class="sect-h"><span class="no">03</span><h2>各力評分明細</h2></div>
+    <div id="tbl-scores"></div>
+  </div>
+
+  <div class="sect pagebreak">
+    <div class="sect-h"><span class="no">04</span><h2>初步策略建議</h2></div>
+    <div id="recs"></div>
+  </div>
+
+  <div class="sect pagebreak">
+    <div class="sect-h"><span class="no">05</span><h2>報告署名</h2></div>
+    <div class="sign-grid">
+      <div class="sign-f"><label>診斷顧問</label><input id="sg1" type="text" placeholder="姓名"></div>
+      <div class="sign-f"><label>所屬單位／職稱</label><input id="sg2" type="text" placeholder="例：財團法人○○發展中心 · 產業顧問"></div>
+      <div class="sign-f"><label>複核主管</label><input id="sg3" type="text" placeholder="姓名／職稱"></div>
+      <div class="sign-f"><label>報告日期</label><input id="sg4" type="text" placeholder="民國 ○○○ 年 ○ 月 ○ 日"></div>
+      <div class="sign-f"><label>受評單位確認人</label><input id="sg5" type="text" placeholder="姓名／職稱"></div>
+      <div class="sign-f"><label>診斷案號／計畫名稱</label><input id="sg6" type="text" placeholder="例：115 年度○○產業輔導計畫"></div>
+    </div>
+    <div class="sign-grid" style="margin-top:8px">
+      <div class="sign-box"><span class="cap">診斷顧問簽章</span><div class="sign-line"></div></div>
+      <div class="sign-box"><span class="cap">受評單位代表簽章</span><div class="sign-line"></div></div>
+    </div>
+  </div>
+
+  <div class="sect pagebreak">
+    <div class="sect-h"><span class="no">06</span><h2>分析方法與資料來源</h2></div>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:14px 0 6px">一、分析架構依據</h3>
+    <ul class="ref">
+      <li>Porter, M. E. (1979). How Competitive Forces Shape Strategy. <i>Harvard Business Review</i>, 57(2), 137–145.</li>
+      <li>Porter, M. E. (1980). <i>Competitive Strategy: Techniques for Analyzing Industries and Competitors</i>. New York: Free Press.</li>
+      <li>Porter, M. E. (2008). The Five Competitive Forces That Shape Strategy. <i>Harvard Business Review</i>, 86(1), 25–40.</li>
+    </ul>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">二、量測設計與計分方法</h3>
+    <table>
+      <tr><th style="width:22%">項目</th><th>說明</th></tr>
+      <tr><td>量測構面</td><td>Porter 五力，各力設 5 項驅動因子，合計 25 項評分題；另設 5 題分析邊界設定題（不計分）</td></tr>
+      <tr><td>量表</td><td>五點語意錨定量表，方向統一為「分數愈高＝該力對業者的壓力愈大」</td></tr>
+      <tr><td>單力分數</td><td>該力 5 項驅動因子之算術平均（預設等權）</td></tr>
+      <tr><td>產業吸引力指數</td><td>6 −（五力平均分數），區間 1.00–5.00，數值愈高代表結構性獲利空間愈大</td></tr>
+      <tr><td>判讀門檻</td><td>≤ 2.4 低壓力｜2.5–3.4 中度｜≥ 3.5 高壓力</td></tr>
+      <tr><td>建議生成</td><td>規則式對應（5 力 × 3 級壓力＝15 組建議），非統計推論或預測模型</td></tr>
+    </table>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">三、本次評分資料來源</h3>
+    <div id="src-table"></div>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">四、建議補充之外部佐證來源</h3>
+    <table>
+      <tr><th style="width:30%">佐證類型</th><th>建議查證來源</th></tr>
+      <tr><td>產業規模與家數</td><td>經濟部統計處工業及服務業普查、財政部財政資訊中心營利事業家數統計</td></tr>
+      <tr><td>同業財務比較</td><td>公開資訊觀測站財報、TEJ 台灣經濟新報、經濟部中小企業處統計</td></tr>
+      <tr><td>技術與替代趨勢</td><td>資策會 MIC、工研院產科國際所（IEK）、經濟部技術處研究報告</td></tr>
+      <tr><td>進出口與市場動向</td><td>財政部關務署進出口貿易統計、國貿署貿易統計資料庫</td></tr>
+      <tr><td>法規與政策門檻</td><td>全國法規資料庫、主管機關公告與許可辦法</td></tr>
+    </table>
+
+    <p class="disclaimer">本報告之五力評分係由受評單位或訪視顧問依現況<b>主觀自評</b>產生，屬結構性初步判讀，不構成投資、財務或法律建議。正式輔導建議、投資決策或標案評估之引用，應併同上述外部佐證來源、受評單位實際財務數據與同業標竿進行交叉驗證後定案。</p>
+  </div>
+
+  <div class="actions no-print">
+    <button class="btn" id="btn-pdf">輸出 PDF 報告</button>
+    <button class="btn ghost" id="btn-png1">下載五力羅盤 PNG</button>
+    <button class="btn ghost" id="btn-png2">下載雷達圖 PNG</button>
+    <button class="btn ghost" id="btn-restart">重新評估</button>
+  </div>
+</section>
+
+</div>
+<div id="offline" class="hidden no-print">離線模式 · 所有功能可正常使用</div>
+
+<script>
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+var C={low:"#2E7D6B",mid:"#C08A1E",high:"#B33D2E",ink:"#12303A",soft:"#5C7278",line:"#C6D2D5",card:"#FBFCFC",accent:"#1F5E6E"};
+var FONT="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif";
+var MONO="'IBM Plex Mono','Noto Sans TC',monospace";
+
+/* ---------- 分析邊界（5 題，不計分） ---------- */
+var BOUNDARY=[
+ {id:"b1",type:"text",label:"受評企業／單位名稱",q:"本次診斷的受評企業或單位名稱？",ph:"例：○○精密工業股份有限公司"},
+ {id:"b2",type:"text",label:"產業定義",q:"請以一句話界定所分析的產業（主要產品或服務）。",ph:"例：工業用精密螺絲扣件製造"},
+ {id:"b3",type:"choice",label:"市場地理範圍",q:"本次五力分析的市場地理範圍？",opts:["地方／單一縣市","全國市場","亞太區域","全球市場"]},
+ {id:"b4",type:"choice",label:"價值鏈位置",q:"貴單位在產業價值鏈中的主要位置？",opts:["原料／基礎材料","零組件／半成品","製造組裝／代工","通路批發／貿易","零售／終端服務","系統整合／顧問服務"]},
+ {id:"b5",type:"choice",label:"分析時點",q:"本次分析的時間視角？",opts:["當前現況","未來 1 年展望","未來 3 年展望","未來 5 年展望"]}
+];
+
+/* ---------- 五力題庫（25 題，1=壓力低 → 5=壓力高） ---------- */
+var FORCES=[
+{key:"entrants",name:"新進入者威脅",short:"新進入者",color:C.high,
+ kpi:["新進業者家數（近 3 年）","前三大業者市占集中度 CR3","客戶平均合約年限"],
+ qs:[
+ {d:"規模經濟門檻",q:"新進業者若要達到與既有業者相當的單位成本，所需營運規模門檻有多高？",
+  a:["極高：需數倍於一般業者的規模","高：需相當投資才能攤平成本","中等：規模影響成本但非決定性","低：小規模亦可接近成本水準","極低：幾乎不受規模影響"]},
+ {d:"資本與設備投入",q:"投入本產業所需的初始資本、設備或系統建置門檻？",
+  a:["極高：需大額固定資產或授權金","高：需可觀前期投資","中等：可由一般融資支應","低：設備可租賃或委外","極低：幾乎無前期投入"]},
+ {d:"品牌與客戶轉換成本",q:"既有業者的品牌信任與客戶關係，對新進者形成多大阻力？",
+  a:["極大：客戶高度黏著且重視既有品牌","大：需長期投入才能建立信任","中等：品牌有影響但可被價格或性能突破","小：客戶樂於嘗試新供應商","幾乎無阻力：客戶無品牌偏好"]},
+ {d:"通路與供應鏈取得",q:"新進者取得關鍵通路、上架資格或供應鏈支援的難度？",
+  a:["極難：通路被既有業者鎖定","難：需長時間經營或高額代價","中等：可取得但條件較差","容易：通路開放且多元","極容易：可透過數位平台直接觸及客戶"]},
+ {d:"法規、證照與政策門檻",q:"本產業的法規許可、證照、認證或政策限制對新進者的阻擋力？",
+  a:["極高：屬特許行業或需高門檻認證","高：需通過多項認證且耗時","中等：有規範但取得不困難","低：僅需一般商業登記","幾乎無管制"]}
+]},
+{key:"suppliers",name:"供應商議價力",short:"供應商",color:C.mid,
+ kpi:["關鍵料件合格供應商家數","單一供應商採購占比","進料成本占營收比重"],
+ qs:[
+ {d:"供應商家數與集中度",q:"關鍵原料、零組件或服務的合格供應商數量？",
+  a:["供應來源充足，選擇眾多","供應商多，替換不難","供應商有限但仍有選擇","少數幾家掌握主要供應","高度集中，近乎獨家壟斷"]},
+ {d:"關鍵投入不可替代性",q:"關鍵原料、技術或專業人才是否具不可替代性？",
+  a:["完全標準化，可自由替換","差異小，替換成本低","部分規格需調整","高度專用，替換需重新驗證","獨家技術或專利，無可替代"]},
+ {d:"更換供應商成本",q:"更換供應商所需付出的時間、驗證與轉換成本？",
+  a:["幾乎無成本，可隨時切換","低：短期內可完成轉換","中等：需數月驗證","高：需重新設計或送認證","極高：實質上已被鎖定"]},
+ {d:"供應商前向整合威脅",q:"供應商自行跨足下游、直接服務貴單位客戶的可能性？",
+  a:["幾乎不可能","低：缺乏能力或意願","中等：已有零星案例","高：供應商已布局下游","極高：供應商已成為直接競爭者"]},
+ {d:"採購量對供應商的份量",q:"貴單位採購金額對主要供應商的重要性？",
+  a:["為其主要客戶，具高度影響力","占比高，議價具份量","中等，屬一般客戶","占比低，議價空間有限","微不足道，幾無議價籌碼"]}
+]},
+{key:"buyers",name:"買方議價力",short:"買方",color:C.high,
+ kpi:["前五大客戶營收占比","平均毛利率","客戶續約率／留存率"],
+ qs:[
+ {d:"客戶集中度",q:"前五大客戶合計占營收比重約為多少？",
+  a:["低於 20%，客戶高度分散","約 20–35%","約 35–50%","約 50–70%","高於 70%，高度集中"]},
+ {d:"產品／服務標準化程度",q:"貴單位提供的產品或服務，客戶可比較與替換的程度？",
+  a:["高度客製，難以直接比較","具明顯差異化","部分標準化","多數規格已趨同","完全標準化，僅剩價格競爭"]},
+ {d:"客戶轉換成本",q:"客戶改換其他供應商所需付出的成本？",
+  a:["極高：客戶被系統或流程鎖定","高：轉換需重新導入驗證","中等","低：轉換相對容易","幾乎無成本：可隨時更換"]},
+ {d:"價格敏感度與比價行為",q:"客戶採購決策對價格的敏感程度？",
+  a:["重視整體價值，價格非主要考量","價格為次要因素","價格與品質並重","主動比價、頻繁議價","幾乎純以最低價決標"]},
+ {d:"客戶後向整合可能",q:"客戶自行生產或自建服務能力以取代外購的可能性？",
+  a:["幾乎不可能","低","中等：部分客戶評估中","高：已有客戶開始自製","極高：自製已成明顯趨勢"]}
+]},
+{key:"substitutes",name:"替代品威脅",short:"替代品",color:C.mid,
+ kpi:["替代方案市場滲透率","客戶詢問替代方案比例","新技術導入案件數"],
+ qs:[
+ {d:"替代方案性價比",q:"其他可滿足相同需求的替代方案，其性價比相較本產業方案如何？",
+  a:["明顯較差","略差","相當","略優","明顯優於本產業方案"]},
+ {d:"改用替代品的轉換成本",q:"客戶改用替代方案需付出的轉換成本？",
+  a:["極高","高","中等","低","幾乎無成本"]},
+ {d:"跨業與數位替代速度",q:"平台化、數位化或 AI 等跨業替代方案的出現速度？",
+  a:["尚未出現","已有討論但未落地","已有試行案例","正快速擴散中","已大規模取代既有作法"]},
+ {d:"客戶接受替代的意願",q:"客戶對改採替代方案的接受度？",
+  a:["高度抗拒改變","保守，需長期說服","中立，視效益而定","樂於嘗試新方案","已主動轉向替代方案"]},
+ {d:"替代技術成熟度",q:"主要替代技術目前的成熟度？",
+  a:["概念階段，可靠度不足","早期驗證中","已小量商用","成熟商用","已成為產業新標準"]}
+]},
+{key:"rivalry",name:"現有競爭強度",short:"同業競爭",color:C.high,
+ kpi:["產業平均售價變動率","產能稼動率","價格因素失單比例"],
+ qs:[
+ {d:"競爭者數量與規模均衡度",q:"市場中競爭者的數量與規模分布？",
+  a:["少數業者，且領導地位明確","業者不多，市場秩序穩定","業者中等，各有市場區隔","業者眾多，規模相近","高度分散且勢均力敵，纏鬥激烈"]},
+ {d:"市場成長率",q:"本產業近年的市場成長情形？",
+  a:["高速成長，需求大於供給","穩健成長","微幅成長","已停滯","衰退中，須靠搶食對手市占"]},
+ {d:"固定成本與產能壓力",q:"固定成本與產能利用率對經營的壓力？",
+  a:["固定成本低，營運彈性高","固定成本較低","中等","高：須維持一定稼動率","極高：產能閒置即虧損，被迫殺價"]},
+ {d:"差異化程度",q:"同業之間產品或服務的差異程度？",
+  a:["高度差異化，各有專屬定位","具明顯差異","部分差異","差異有限","幾乎同質，價格為唯一武器"]},
+ {d:"退出障礙",q:"若決定退出本產業，所面臨的障礙？",
+  a:["極低：可隨時轉型或退出","低","中等","高：資產專用性強","極高：即使虧損仍須留在市場"]}
+]}
+];
+
+/* ---------- 策略建議規則庫 ---------- */
+var RECS={
+entrants:{
+ high:{d:"進入門檻正在鬆動，既有優勢的保護期有限。",a:[
+  ["以規模、認證或客戶資料資產重建結構性門檻","策略規劃＋品保職能 2–3 人月；認證與稽核相關預算","中期（6–18 個月）"],
+  ["加速鎖定關鍵通路與獨家合作，壓縮新進者可用空間","業務主管＋法務 1–2 人月；通路經營預算","短期（3–6 個月）"],
+  ["透過系統整合、長約或服務綁定墊高客戶轉換成本","資訊＋業務 3–5 人月；系統建置資本支出","中期（9–18 個月）"]]},
+ mid:{d:"門檻存在但不穩固，須主動維護。",a:[
+  ["盤點最易被複製的環節，優先補強","跨部門工作小組 0.5–1 人月（既有人力）","短期（1–3 個月）"],
+  ["以專利、認證或政策資格拉高門檻","研發＋外部智財顧問；申請與維護費用","中期（6–18 個月）"],
+  ["強化既有客戶關係深度，減少被切入的縫隙","業務團隊既有人力；客戶經營預算","持續性（每季檢視）"]]},
+ low:{d:"結構性保護良好，應由防守轉為擴張。",a:[
+  ["將門檻優勢轉換為市占擴張與定價空間","業務＋財會 1–2 人月","短期（3–6 個月）"],
+  ["提前布局相鄰市場，避免門檻因技術變遷失效","策略＋研發；市場研究委外預算","長期（18 個月以上）"],
+  ["定期檢視法規鬆綁風險，預作情境準備","法遵人員 0.2 人月／季","持續性（每季）"]]}},
+suppliers:{
+ high:{d:"成本與交期主導權在上游，獲利穩定度受制於人。",a:[
+  ["建立第二、第三供應來源與合格備援清單","採購＋品保 2–3 人月；試樣與驗證費用","中期（6–12 個月）"],
+  ["以長約、聯合採購或策略聯盟換取議價籌碼","採購主管＋法務 1–2 人月","短期（3–9 個月）"],
+  ["評估關鍵料件自製或向上整合可行性","可行性評估團隊；資本支出評估與董事會決議","長期（12–24 個月）"]]},
+ mid:{d:"上游影響尚可控，但須防止關鍵料件單點失效。",a:[
+  ["針對高風險料件建立安全庫存與替代規格","採購＋生管 1 人月；營運資金占用","短期（3–6 個月）"],
+  ["導入供應商績效評鑑與分級管理","品保＋採購 1–2 人月；表單與系統調整","中期（6–12 個月）"],
+  ["以需求預測共享換取價格與交期承諾","生管＋資訊系統介接 1–2 人月","中期（6–12 個月）"]]},
+ low:{d:"採購具主導地位，可將優勢轉為成本與品質競爭力。",a:[
+  ["以集中採購擴大成本優勢並回饋至定價策略","採購＋財會 1 人月","短期（3–6 個月）"],
+  ["要求供應商共同投入研發或品質改善","研發＋採購；共同開發分攤預算","中期（9–18 個月）"],
+  ["避免過度壓價導致供應體系不穩","採購政策檢討 0.5 人月","短期（1–3 個月）"]]}},
+buyers:{
+ high:{d:"價格壓力主要來自客戶端，議價權已外移。",a:[
+  ["由規格供應轉向解決方案與服務綁定","業務＋技術服務 3–6 人月；服務體系建置預算","中期（9–18 個月）"],
+  ["分散客戶結構，逐步降低前五大客戶占比","業務開發人力；行銷、展會與認證預算","長期（12–24 個月）"],
+  ["以資料、系統或維運服務提高客戶轉換成本","資訊＋售後服務 3–5 人月；平台建置支出","中期（9–18 個月）"]]},
+ mid:{d:"客戶議價力尚可管理，但差異化正在流失。",a:[
+  ["建立分級客戶經營模式，鎖定高價值客群","業務＋財會（客戶別獲利分析）1–2 人月","短期（3–6 個月）"],
+  ["強化交期、品質等非價格競爭要素","生管＋品保 2–3 人月","中期（6–12 個月）"],
+  ["定期檢視毛利率與客戶集中度變化","財會月報機制 0.2 人月／月","持續性（每月）"]]},
+ low:{d:"對客戶具相對優勢，應把握定價與擴張空間。",a:[
+  ["檢討定價策略，反映實際價值而非成本加成","財會＋業務 1–2 人月","短期（3–6 個月）"],
+  ["以既有優勢向客戶價值鏈上下游延伸","策略＋業務；新事業可行性評估預算","長期（12–24 個月）"],
+  ["留意客戶端整併可能導致議價力翻轉","業務情報蒐集 0.2 人月／季","持續性（每季）"]]}},
+substitutes:{
+ high:{d:"產業價值主張正被跨業或數位方案侵蝕。",a:[
+  ["回到客戶真正要完成的工作，重新定義產品範疇","跨部門工作坊＋外部顧問 1–2 人月","短期（3–6 個月）"],
+  ["主動納入替代技術（AI、平台化），由被取代者轉為提供者","研發＋資訊 6–12 人月；技術導入與人才招募預算","長期（12–24 個月）"],
+  ["設定替代品滲透率監測指標與策略觸發門檻","企劃 0.5 人月建置、0.2 人月／季維運","短期（1–3 個月）"]]},
+ mid:{d:"替代趨勢已現，仍有調整的時間窗口。",a:[
+  ["建立技術雷達，追蹤替代方案的成本曲線","研發企劃 0.3 人月／季；產業資料庫訂閱費","持續性（每季）"],
+  ["以既有客戶關係先行試行新型服務模式","業務＋研發 2–3 人月；試點專案預算","中期（6–12 個月）"],
+  ["評估與替代方案業者合作而非正面對抗","策略＋法務 1 人月","中期（6–12 個月）"]]},
+ low:{d:"替代威脅有限，但不宜視為長期恆定。",a:[
+  ["每年重新檢視替代技術成熟度","研發企劃 0.5 人月／年","持續性（每年）"],
+  ["將資源集中於既有價值主張的深化","既有研發與行銷資源重新配置","中期（6–18 個月）"],
+  ["觀察相鄰產業的技術外溢風險","情報蒐集 0.2 人月／季","持續性（每季）"]]}},
+rivalry:{
+ high:{d:"同質化與產能壓力使利潤被競爭稀釋。",a:[
+  ["選擇具獲利性的利基區隔，退出無利可圖的價格戰場","策略＋財會（產品別損益分析）2–3 人月","中期（6–12 個月）"],
+  ["以服務、交期或品質建立非價格競爭軸線","生管＋品保＋售服 3–5 人月","中期（9–18 個月）"],
+  ["檢討產能與固定成本結構，提高營運彈性","財會＋廠務 2–4 人月；可能涉及資產處分決議","長期（12–24 個月）"]]},
+ mid:{d:"競爭可控，但差異化須持續投資才能維持。",a:[
+  ["明確界定目標客群與價值主張，避免定位模糊","高階主管策略工作坊 1 人月","短期（1–3 個月）"],
+  ["建立可量化的服務水準承諾（SLA）作為差異點","業務＋品保 1–2 人月","中期（6–12 個月）"],
+  ["監控同業產能擴張與定價動向","市場情報 0.3 人月／季","持續性（每季）"]]},
+ low:{d:"競爭秩序相對穩定，具備投資與擴張條件。",a:[
+  ["把握結構優勢擴大市占與投入研發","研發＋業務；年度投資預算配置","中期（12–18 個月）"],
+  ["建立早期預警機制，偵測新競爭者動向","企劃 0.5 人月建置","短期（3–6 個月）"],
+  ["避免因獲利穩定而延遲能力升級","人才培育與數位轉型年度預算","長期（持續性）"]]}}
+};
+
+var VERDICT=[
+ {min:4.0,t:"結構優越：具備長期獲利條件",d:"五力整體壓力偏低，產業結構有利於既有業者。建議擴大投入、鞏固門檻，並將結構紅利轉換為市占與研發能量。"},
+ {min:3.4,t:"結構良好：可選擇性投資",d:"整體結構仍屬有利，但已出現局部壓力。建議採選擇性投資策略，資源集中於壓力最低且成長性佳的區隔。"},
+ {min:2.8,t:"結構中性：須聚焦利基與效率",d:"獲利空間受多重力量牽制。建議聚焦利基市場、提升營運效率，並針對壓力最大的一至二項力量優先處理。"},
+ {min:2.2,t:"結構承壓：須差異化或成本重整",d:"產業結構明顯不利，若不調整將持續侵蝕利潤。建議在差異化與成本領導之間明確選邊，避免中間路線。"},
+ {min:0,t:"結構嚴峻：須重新定位或轉型",d:"多數力量同時形成高壓，僅靠營運改善難以扭轉。建議評估商業模式重新定位、跨域轉型或有序退出。"}
+];
+
+/* ---------- 狀態 ---------- */
+var QUEUE=[],ANS={},idx=0;
+(function build(){
+  for(var i=0;i<BOUNDARY.length;i++){var b=BOUNDARY[i];QUEUE.push({kind:"b",id:b.id,force:"分析邊界",driver:b.label,q:b.q,type:b.type,opts:b.opts,ph:b.ph});}
+  for(var f=0;f<FORCES.length;f++){var F=FORCES[f];
+    for(var j=0;j<F.qs.length;j++){var Q=F.qs[j];
+      QUEUE.push({kind:"s",id:F.key+"_"+j,fkey:F.key,force:F.name,driver:"驅動因子 "+(j+1)+"／5 · "+Q.d,q:Q.q,type:"scale",opts:Q.a});}}
+})();
+
+var $=function(s){return document.querySelector(s)};
+var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+
+function drawTicks(){
+  var box=$("#ticks");box.innerHTML="";
+  for(var i=0;i<QUEUE.length;i++){
+    var t=el("div","tick");
+    if(i<idx)t.className="tick done";
+    if(i===idx)t.className="tick now";
+    box.appendChild(t);
+  }
+  $("#cur").textContent=String(idx+1);
+}
+
+function render(){
+  var it=QUEUE[idx];
+  drawTicks();
+  $("#q-force").textContent=it.force;
+  $("#q-driver").textContent=it.driver;
+  $("#q-text").textContent=it.q;
+  var box=$("#q-opts");box.innerHTML="";
+  if(it.type==="text"){
+    var inp=el("input");inp.type="text";inp.placeholder=it.ph||"";inp.value=ANS[it.id]||"";
+    inp.addEventListener("input",function(){ANS[it.id]=inp.value;saveDraft()});
+    inp.addEventListener("keydown",function(e){if(e.key==="Enter")next()});
+    box.appendChild(inp);
+    $("#q-hint").textContent="輸入後按 Enter 繼續";
+    setTimeout(function(){inp.focus()},40);
+  }else{
+    for(var i=0;i<it.opts.length;i++)(function(i){
+      var b=el("button","opt");b.type="button";
+      b.setAttribute("aria-pressed",String(ANS[it.id]===i+1));
+      var n=el("span","num",String(i+1));
+      var s=el("span",null,it.opts[i]);
+      b.appendChild(n);b.appendChild(s);
+      b.addEventListener("click",function(){pick(i+1)});
+      box.appendChild(b);
+    })(i);
+    $("#q-hint").textContent="按數字鍵 1–"+it.opts.length+" 可快速作答";
+  }
+  $("#btn-prev").disabled=(idx===0);
+  $("#btn-next").textContent=(idx===QUEUE.length-1)?"產生診斷報告":"下一題";
+}
+
+function pick(v){
+  var it=QUEUE[idx];ANS[it.id]=v;saveDraft();
+  var bs=$("#q-opts").children;
+  for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(i+1===v));
+  setTimeout(next,240);
+}
+function next(){
+  var it=QUEUE[idx];
+  if(it.type!=="text"&&!ANS[it.id])return;
+  if(idx===QUEUE.length-1){showResult();return}
+  idx++;render();
+}
+function prev(){if(idx>0){idx--;render()}}
+
+document.addEventListener("keydown",function(e){
+  if($("#s-q").classList.contains("hidden"))return;
+  var it=QUEUE[idx];
+  if(it.type!=="text"&&/^[1-9]$/.test(e.key)){
+    var v=parseInt(e.key,10);if(v<=it.opts.length)pick(v);
+  }
+  if(e.key==="ArrowLeft")prev();
+  if(e.key==="ArrowRight"||e.key==="Enter")next();
+});
+
+/* ---------- 計分 ---------- */
+function level(v){return v>=3.5?"high":(v>=2.5?"mid":"low")}
+function levelText(l){return l==="high"?"高壓力":(l==="mid"?"中度":"低壓力")}
+function levelColor(l){return l==="high"?C.high:(l==="mid"?C.mid:C.low)}
+function compute(){
+  var out=[],sum=0;
+  for(var f=0;f<FORCES.length;f++){
+    var F=FORCES[f],t=0,items=[];
+    for(var j=0;j<F.qs.length;j++){var v=ANS[F.key+"_"+j]||3;t+=v;items.push({d:F.qs[j].d,v:v})}
+    var avg=t/F.qs.length;sum+=avg;
+    out.push({key:F.key,name:F.name,short:F.short,score:avg,lv:level(avg),items:items,kpi:F.kpi});
+  }
+  return {forces:out,avg:sum/5,index:6-(sum/5)};
+}
+
+/* ---------- 五力羅盤 ---------- */
+function drawForces(R){
+  var m={};for(var i=0;i<R.forces.length;i++)m[R.forces[i].key]=R.forces[i];
+  var W=780,H=580;
+  var s='<svg xmlns="'+NS+'" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="五力壓力羅盤">';
+  s+='<defs>';
+  var keys=["entrants","suppliers","buyers","substitutes"];
+  for(var k=0;k<keys.length;k++){var col=levelColor(m[keys[k]].lv);
+    s+='<marker id="ar-'+keys[k]+'" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="20" markerHeight="20" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="'+col+'"/></marker>';}
+  s+='</defs>';
+
+  function box(x,y,w,h,d,big){
+    var col=levelColor(d.lv),g="";
+    g+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="2" fill="'+col+'" fill-opacity="'+(big?0.14:0.10)+'" stroke="'+col+'" stroke-width="'+(big?2.4:1.6)+'"/>';
+    g+='<text x="'+(x+w/2)+'" y="'+(y+(big?46:36))+'" text-anchor="middle" font-family="'+FONT+'" font-size="'+(big?21:18)+'" font-weight="700" fill="'+C.ink+'">'+d.name+'</text>';
+    g+='<text x="'+(x+w/2)+'" y="'+(y+(big?86:66))+'" text-anchor="middle" font-family="'+MONO+'" font-size="'+(big?30:26)+'" font-weight="600" fill="'+col+'">'+d.score.toFixed(2)+'</text>';
+    g+='<text x="'+(x+w/2)+'" y="'+(y+(big?110:86))+'" text-anchor="middle" font-family="'+FONT+'" font-size="12" fill="'+C.soft+'">'+levelText(d.lv)+'</text>';
+    return g;
+  }
+  function arrow(x1,y1,x2,y2,d,key){
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+levelColor(d.lv)+'" stroke-width="'+(2.2+d.score*1.7).toFixed(1)+'" marker-end="url(#ar-'+key+')" stroke-linecap="round"/>';
+  }
+  s+=box(285,45,210,110,m.entrants,false);
+  s+=box(285,425,210,110,m.substitutes,false);
+  s+=box(18,240,202,110,m.suppliers,false);
+  s+=box(560,240,202,110,m.buyers,false);
+  s+=box(275,225,230,140,m.rivalry,true);
+  s+=arrow(390,159,390,220,m.entrants,"entrants");
+  s+=arrow(390,421,390,370,m.substitutes,"substitutes");
+  s+=arrow(224,295,270,295,m.suppliers,"suppliers");
+  s+=arrow(556,295,510,295,m.buyers,"buyers");
+  s+='<text x="390" y="565" text-anchor="middle" font-family="'+MONO+'" font-size="11" fill="'+C.soft+'" letter-spacing="1.5">SCALE  1.0 LOW  —  3.0 MODERATE  —  5.0 HIGH</text>';
+  s+='</svg>';
+  return s;
+}
+
+/* ---------- 雷達圖 ---------- */
+function drawRadar(R){
+  var W=780,H=528,cx=390,cy=272,rad=188;
+  function pt(i,v){var a=(-90+i*72)*Math.PI/180,r=rad*(v/5);return[cx+r*Math.cos(a),cy+r*Math.sin(a)]}
+  var s='<svg xmlns="'+NS+'" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="五力壓力雷達圖">';
+  for(var g=1;g<=5;g++){
+    var p=[];for(var i=0;i<5;i++){var q=pt(i,g);p.push(q[0].toFixed(1)+","+q[1].toFixed(1))}
+    s+='<polygon points="'+p.join(" ")+'" fill="none" stroke="'+C.line+'" stroke-width="1"/>';
+  }
+  var th=[[2.5,C.mid],[3.5,C.high]];
+  for(var t=0;t<th.length;t++){
+    var p2=[];for(var i2=0;i2<5;i2++){var q2=pt(i2,th[t][0]);p2.push(q2[0].toFixed(1)+","+q2[1].toFixed(1))}
+    s+='<polygon points="'+p2.join(" ")+'" fill="none" stroke="'+th[t][1]+'" stroke-width="1.2" stroke-dasharray="5 5" opacity="0.75"/>';
+  }
+  for(var i3=0;i3<5;i3++){var e=pt(i3,5);
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'" stroke="'+C.line+'" stroke-width="1"/>';}
+  var pp=[];for(var i4=0;i4<5;i4++){var q4=pt(i4,R.forces[i4].score);pp.push(q4[0].toFixed(1)+","+q4[1].toFixed(1))}
+  s+='<polygon points="'+pp.join(" ")+'" fill="'+C.accent+'" fill-opacity="0.16" stroke="'+C.accent+'" stroke-width="2.4" stroke-linejoin="round"/>';
+  for(var i5=0;i5<5;i5++){
+    var d=R.forces[i5],q5=pt(i5,d.score);
+    s+='<circle cx="'+q5[0].toFixed(1)+'" cy="'+q5[1].toFixed(1)+'" r="5.5" fill="'+levelColor(d.lv)+'" stroke="'+C.card+'" stroke-width="2"/>';
+    var lp=pt(i5,5.68),ta="middle",dy=0;
+    if(lp[0]>cx+12){ta="start";dy=5}else if(lp[0]<cx-12){ta="end";dy=5}else if(lp[1]<cy){dy=-12}else{dy=22}
+    s+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="'+FONT+'" font-size="16" font-weight="700" fill="'+C.ink+'">'+d.short+'</text>';
+    s+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+19).toFixed(1)+'" text-anchor="'+ta+'" font-family="'+MONO+'" font-size="14" font-weight="600" fill="'+levelColor(d.lv)+'">'+d.score.toFixed(2)+'</text>';
+  }
+  for(var r=1;r<=5;r++){
+    var y=cy-rad*(r/5);
+    s+='<text x="'+(cx+11)+'" y="'+(y+4)+'" font-family="'+MONO+'" font-size="10" fill="'+C.soft+'" opacity="0.75">'+r+'</text>';
+  }
+  s+='<text x="390" y="516" text-anchor="middle" font-family="'+MONO+'" font-size="11" fill="'+C.soft+'" letter-spacing="1.5">DASHED RINGS  2.5 / 3.5  THRESHOLDS</text>';
+  s+='</svg>';
+  return s;
+}
+
+/* ---------- 結果頁 ---------- */
+function showResult(){
+  var R=compute();
+  $("#s-q").classList.add("hidden");
+  $("#s-result").classList.remove("hidden");
+  window.scrollTo(0,0);
+
+  var name=(ANS.b1||"未具名單位").trim();
+  var ind=(ANS.b2||"未界定產業").trim();
+  $("#r-title").textContent=name+"｜產業結構診斷報告";
+  var d=new Date();
+  var dstr=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("#r-meta").textContent=["產業定義："+ind,"範圍："+(ANS.b3||"—"),"價值鏈："+(ANS.b4||"—"),"視角："+(ANS.b5||"—"),
+    "製表 "+dstr].join(" · ");
+  $("#r-index").textContent=R.index.toFixed(1);
+  var v=VERDICT.filter(function(x){return R.index>=x.min})[0];
+  $("#r-verdict").textContent=v.t;
+  $("#r-verdict-desc").textContent=v.d;
+
+  $("#chart-forces").innerHTML=drawForces(R);
+  $("#chart-radar").innerHTML=drawRadar(R);
+
+  var sorted=R.forces.slice().sort(function(a,b){return b.score-a.score});
+  var h='<table><tr><th style="width:24%">五力構面</th><th>壓力最高之驅動因子</th><th style="width:12%">分數</th><th style="width:14%">判讀</th><th style="width:12%">優先序</th></tr>';
+  for(var i=0;i<R.forces.length;i++){
+    var f=R.forces[i];
+    var top=f.items.slice().sort(function(a,b){return b.v-a.v})[0];
+    var rank=sorted.indexOf(f)+1;
+    h+='<tr><td style="font-weight:700">'+f.name+'</td><td>'+top.d+'（'+top.v+' 分）</td>'+
+       '<td class="n">'+f.score.toFixed(2)+'</td>'+
+       '<td><span class="lv" style="background:'+levelColor(f.lv)+'">'+levelText(f.lv)+'</span></td>'+
+       '<td class="n">'+rank+'</td></tr>';
+  }
+  h+='<tr><td colspan="2" style="font-weight:700">五力平均壓力／產業吸引力指數</td><td class="n" style="font-weight:700">'+R.avg.toFixed(2)+'</td><td colspan="2" class="n" style="font-weight:700">'+R.index.toFixed(2)+' / 5.00</td></tr></table>';
+  $("#tbl-scores").innerHTML=h;
+
+  var rec="";
+  rec+='<p class="lede" style="margin-bottom:18px">最大結構壓力來自<b>'+sorted[0].name+'</b>（'+sorted[0].score.toFixed(2)+'）與<b>'+sorted[1].name+'</b>（'+sorted[1].score.toFixed(2)+'），建議列為首要處理課題；相對優勢為<b>'+sorted[4].name+'</b>（'+sorted[4].score.toFixed(2)+'），可作為策略施力支點。</p>';
+  for(var j=0;j<sorted.length;j++){
+    var F=sorted[j],r=RECS[F.key][F.lv],col=levelColor(F.lv);
+    rec+='<div class="rec" style="border-left-color:'+col+'">';
+    rec+='<h3>'+(j+1)+'. '+F.name+' — '+levelText(F.lv)+'（'+F.score.toFixed(2)+'）</h3>';
+    rec+='<p class="diag">'+r.d+'</p>';
+    rec+='<table class="acts"><tr><th style="width:46%">建議行動</th><th style="width:34%">所需資源（規劃參考）</th><th style="width:20%">預估期程</th></tr>';
+    for(var k=0;k<r.a.length;k++){
+      rec+='<tr><td>'+r.a[k][0]+'</td><td class="res">'+r.a[k][1]+'</td><td class="res">'+r.a[k][2]+'</td></tr>';
+    }
+    rec+='</table><p class="kpi">建議追蹤指標：'+F.kpi.join('｜')+'</p></div>';
+  }
+  var sb='<table><tr><th style="width:30%">項目</th><th>內容</th></tr>';
+  sb+='<tr><td>受評單位</td><td>'+name+'</td></tr>';
+  sb+='<tr><td>產業定義</td><td>'+ind+'</td></tr>';
+  sb+='<tr><td>市場地理範圍</td><td>'+(ANS.b3||'—')+'</td></tr>';
+  sb+='<tr><td>價值鏈位置</td><td>'+(ANS.b4||'—')+'</td></tr>';
+  sb+='<tr><td>分析時間視角</td><td>'+(ANS.b5||'—')+'</td></tr>';
+  sb+='<tr><td>評分方式</td><td>受評者自評（一問一答，25 題全數作答）</td></tr>';
+  sb+='<tr><td>評分完成日</td><td>'+dstr+'</td></tr></table>';
+  $("#src-table").innerHTML=sb;
+  if(!viewingSaved){putCase({name:name,ind:ind,index:R.index.toFixed(2),ans:JSON.parse(JSON.stringify(ANS)),ts:Date.now()});
+    ls(function(){localStorage.removeItem(K_DRAFT)});renderCases();}
+  $("#ph-r").textContent=name+"｜"+ind;
+  $("#pf-r").textContent="製表 "+dstr;
+  rec+='<p class="note">「所需資源」之人月數與「預估期程」為規劃層級參考值，須依受評單位規模、現有職能配置與資源條件調整後定案。</p>';
+  $("#recs").innerHTML=rec;
+}
+
+/* ---------- 匯出 ---------- */
+function svgToPng(container,filename){
+  var svg=container.querySelector("svg");if(!svg)return;
+  var vb=svg.getAttribute("viewBox").split(/\s+/).map(Number),sc=2;
+  var data='<?xml version="1.0" encoding="UTF-8"?>'+new XMLSerializer().serializeToString(svg);
+  var url=URL.createObjectURL(new Blob([data],{type:"image/svg+xml;charset=utf-8"}));
+  var img=new Image();
+  img.onload=function(){
+    var cv=document.createElement("canvas");cv.width=vb[2]*sc;cv.height=vb[3]*sc;
+    var ctx=cv.getContext("2d");ctx.fillStyle="#FBFCFC";ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(url);
+    cv.toBlob(function(b){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=filename;a.click();});
+  };
+  img.onerror=function(){alert("圖檔轉換失敗，請改用「輸出 PDF 報告」。")};
+  img.src=url;
+}
+
+
+/* ---------- 本機儲存（PWA） ---------- */
+var K_DRAFT="ff5_draft",K_CASE="ff5_cases",viewingSaved=false;
+function ls(fn,d){try{return fn()}catch(e){return d}}
+function saveDraft(){ls(function(){
+  if(Object.keys(ANS).length===0){localStorage.removeItem(K_DRAFT);return}
+  localStorage.setItem(K_DRAFT,JSON.stringify({ans:ANS,idx:idx,ts:Date.now()}));});}
+function getDraft(){return ls(function(){return JSON.parse(localStorage.getItem(K_DRAFT)||"null")},null)}
+function getCases(){return ls(function(){return JSON.parse(localStorage.getItem(K_CASE)||"[]")},[])}
+function putCase(c){ls(function(){var a=getCases();a.unshift(c);localStorage.setItem(K_CASE,JSON.stringify(a.slice(0,60)))})}
+function delCase(i){ls(function(){var a=getCases();a.splice(i,1);localStorage.setItem(K_CASE,JSON.stringify(a));renderCases()})}
+function fmt(ts){var d=new Date(ts);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function renderCases(){
+  var a=getCases(),z=$("#case-zone");
+  if(!a.length){z.classList.add("hidden");return}
+  z.classList.remove("hidden");
+  var h='<table><tr><th style="width:30%">受評單位</th><th>產業定義</th><th style="width:13%">吸引力指數</th><th style="width:15%">評估日</th><th style="width:14%">操作</th></tr>';
+  for(var i=0;i<a.length;i++){
+    h+='<tr><td style="font-weight:700">'+a[i].name+'</td><td>'+a[i].ind+'</td><td class="n">'+a[i].index+'</td><td class="n">'+fmt(a[i].ts)+'</td>'+
+       '<td><button class="case-a" data-open="'+i+'">檢視</button><button class="case-a del" data-del="'+i+'">刪除</button></td></tr>';
+  }
+  $("#case-list").innerHTML=h+'</table>';
+  var bs=$("#case-list").querySelectorAll("button");
+  for(var j=0;j<bs.length;j++)(function(b){
+    b.addEventListener("click",function(){
+      if(b.dataset.del!==undefined){if(confirm("確定刪除此案件？"))delCase(+b.dataset.del);return}
+      var c=getCases()[+b.dataset.open];ANS=c.ans;viewingSaved=true;$("#s-intro").classList.add("hidden");showResult();viewingSaved=false;
+    });
+  })(bs[j]);
+}
+function initStore(){
+  renderCases();
+  var d=getDraft();
+  if(d&&d.ans&&Object.keys(d.ans).length){
+    ANS=d.ans;idx=d.idx||0;
+    $("#resume-bar").classList.remove("hidden");
+    $("#resume-txt").textContent="偵測到未完成的草稿（"+fmt(d.ts)+"，進度 "+(idx+1)+"／"+QUEUE.length+"）";
+    $("#btn-resume").addEventListener("click",function(){
+      $("#s-intro").classList.add("hidden");$("#s-q").classList.remove("hidden");render();});
+    $("#btn-discard").addEventListener("click",function(){
+      ANS={};idx=0;ls(function(){localStorage.removeItem(K_DRAFT)});$("#resume-bar").classList.add("hidden");});
+  }
+}
+window.addEventListener("online",function(){$("#offline").classList.add("hidden")});
+window.addEventListener("offline",function(){$("#offline").classList.remove("hidden")});
+if("serviceWorker" in navigator){window.addEventListener("load",function(){
+  navigator.serviceWorker.register("./sw.js").catch(function(){});});}
+initStore();
+
+$("#btn-start").addEventListener("click",function(){
+  $("#s-intro").classList.add("hidden");$("#s-q").classList.remove("hidden");render();
+});
+$("#btn-next").addEventListener("click",next);
+$("#btn-prev").addEventListener("click",prev);
+$("#btn-pdf").addEventListener("click",function(){window.print()});
+$("#btn-png1").addEventListener("click",function(){svgToPng($("#chart-forces"),"五力壓力羅盤.png")});
+$("#btn-png2").addEventListener("click",function(){svgToPng($("#chart-radar"),"五力雷達圖.png")});
+$("#btn-restart").addEventListener("click",function(){
+  ANS={};idx=0;ls(function(){localStorage.removeItem(K_DRAFT)});$("#resume-bar").classList.add("hidden");renderCases();$("#s-result").classList.add("hidden");$("#s-intro").classList.remove("hidden");window.scrollTo(0,0);
+});
+</script>
