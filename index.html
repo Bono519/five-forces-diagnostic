@@ -23,9 +23,9 @@
   --low:#2E7D6B;
   --mid:#C08A1E;
   --high:#B33D2E;
-  --serif:"Noto Serif TC",serif;
+  --serif:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU",serif;
   --sans:"Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
-  --mono:"IBM Plex Mono","Noto Sans TC",monospace;
+  --mono:"IBM Plex Mono","Noto Sans TC","PingFang TC",monospace;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--sans);color:var(--ink);
@@ -132,30 +132,131 @@ table.acts td.res{color:var(--ink-soft);font-size:13px}
 .ref{font-size:13.5px;color:var(--ink-soft);padding-left:20px;margin:0}
 .ref li{margin-bottom:5px}
 .disclaimer{border-left:3px solid var(--mid);padding:2px 0 2px 15px;font-size:13.5px;color:var(--ink-soft);margin-top:16px}
-.print-band{display:none}
+
+/* ══════════ 報告頁結構 ══════════ */
+.rpt-page{position:relative}
+.rpt-page+.rpt-page{margin-top:38px;padding-top:30px;border-top:1px dashed var(--line)}
+.page-head,.page-foot{display:none}
+.chart-wrap{margin:4px 0 10px}
+h3.sub{font-family:var(--serif);font-weight:700;font-size:16px;margin:20px 0 8px;color:var(--ink)}
+.rule-thick{height:3px;background:var(--ink);margin:12px 0 0}
+.cover .page-body{display:flex;flex-direction:column;justify-content:space-between;min-height:420px}
+.cover-mid{padding:44px 0 0}
+.cover-title{font-family:var(--serif);font-weight:900;font-size:clamp(32px,6vw,52px);line-height:1.2;margin:0 0 6px;letter-spacing:.02em}
+.cover-sub{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-soft);margin:0 0 34px;text-transform:uppercase}
+table.cover-tbl{width:100%;max-width:560px;border-collapse:collapse}
+table.cover-tbl th{width:34%;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-soft);
+  font-weight:500;text-align:left;padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.cover-tbl td{padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:15px;font-weight:500}
+.cover-foot{margin-top:46px;border-top:1px solid var(--line);padding-top:20px}
+.cover-idx{display:flex;align-items:baseline;gap:12px}
+.cover-idx .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink-soft)}
+.cover-idx .val{font-family:var(--mono);font-weight:600;font-size:40px;line-height:1;color:var(--accent)}
+.cover-idx .of{font-family:var(--mono);font-size:15px;color:var(--ink-soft)}
+.cover-verdict{font-family:var(--serif);font-weight:700;font-size:19px;margin:10px 0 0}
+.confid{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-soft);margin:26px 0 0}
+.idx-box{text-align:right;flex:0 0 auto}
+.head-result>div:first-child{flex:1 1 auto;min-width:0}
+.pri-grid{display:grid;gap:16px;grid-template-columns:1fr 1fr;margin-top:18px}
+.pri{border:1px solid var(--line);border-top:3px solid var(--line);border-radius:2px;padding:14px 16px}
+.pri .rk{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-soft)}
+.pri .nm{font-family:var(--serif);font-weight:700;font-size:16px;margin:4px 0 2px}
+.pri .sc{font-family:var(--mono);font-weight:600;font-size:15px}
+.pri .ds{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.pri .ac{font-size:13px;margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line-soft)}
+.pri .ac b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-soft);display:block;margin-bottom:3px;font-weight:500}
+.pattern{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding:15px 18px;margin-top:16px}
+.pattern .t{font-family:var(--serif);font-weight:700;font-size:17px;margin:0 0 5px}
+.pattern .d{font-size:14px;color:var(--ink-soft);margin:0}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+tr.total td{font-weight:700;border-top:1.5px solid var(--ink);border-bottom:0}
+
 @media print{
-  .print-band{display:block;position:fixed;left:0;right:0;font-family:var(--mono);font-size:9.5px;
-    letter-spacing:.06em;color:var(--ink-soft)}
-  #print-head{top:-9mm;border-bottom:.6pt solid var(--ink);padding-bottom:2mm}
-  #print-foot{bottom:-9mm;border-top:.6pt solid var(--line);padding-top:2mm}
-  .print-band .r{float:right}
-  .pagebreak{break-before:page;page-break-before:always}
-  .sign-f input{border-bottom:.8pt solid #000}
-  table.acts{font-size:10.5pt}
-  body{font-size:10.5pt}
-  body{background:#fff}
-  .wrap{max-width:none;padding:0}
-  .panel{border:none;box-shadow:none;padding:0}
-  .no-print{display:none!important}
-  .sect{break-inside:avoid;page-break-inside:avoid}
-  .rec{break-inside:avoid}
-  svg{max-height:none}
-  @page{size:A4 portrait;margin:22mm 15mm 20mm}
+  @page{size:A4 portrait;margin:16mm 15mm}
+  html,body{background:#fff!important}
+  body{font-size:10pt;line-height:1.6;word-break:keep-all;line-break:strict;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding:0;margin:0}
+  .panel{border:0;box-shadow:none;padding:0;background:transparent}
+  .no-print,#offline{display:none!important}
+
+  .rpt-page{display:flex;flex-direction:column;min-height:258mm;
+    break-after:page;page-break-after:always;break-inside:auto;margin:0;padding:0;border:0}
+  .rpt-page:last-of-type{break-after:auto;page-break-after:auto}
+  .page-body{flex:1 0 auto}
+  .page-head{display:flex!important;justify-content:space-between;gap:10mm;
+    font-family:var(--mono);font-size:8pt;letter-spacing:.04em;color:var(--ink-soft);
+    border-bottom:.5pt solid var(--ink);padding-bottom:2mm;margin-bottom:6mm}
+  .page-foot{display:flex!important;justify-content:space-between;gap:10mm;
+    font-family:var(--mono);font-size:7.5pt;letter-spacing:.04em;color:var(--ink-soft);
+    border-top:.5pt solid var(--line);padding-top:2mm;margin-top:6mm}
+
+  /* 封面 */
+  .cover .page-body{min-height:258mm;justify-content:flex-start;padding:0}
+  .cover-mid{padding-top:0}
+  .cover-title{font-size:34pt}
+  .cover-sub{font-size:9pt;margin-bottom:14mm}
+  table.cover-tbl{max-width:none}
+  table.cover-tbl td{font-size:11.5pt}
+  .cover-idx .val{font-size:30pt}
+
+  /* 章節標題 */
+  .sect-h{border-bottom:.8pt solid var(--line);padding-bottom:2mm;margin-bottom:5mm}
+  .sect-h h2{font-size:15pt}
+  .sect-h .no{font-size:8pt}
+  h3.sub{font-size:12pt;margin:6mm 0 2.5mm}
+  .verdict{font-size:14pt;margin-bottom:2mm}
+  .lede{font-size:10pt;max-width:none}
+  .score-big{font-size:30pt}
+  .score-big span:last-child{font-size:12pt}
+  .head-result{border-bottom:.8pt solid var(--ink);padding-bottom:4mm;margin-bottom:0;align-items:flex-start;flex-wrap:nowrap}
+  .idx-box{margin-left:10mm}
+  .pri-grid{gap:5mm;margin-top:5mm}
+  .pri{padding:3.5mm 4mm;border-top-width:2pt}
+  .pri .nm{font-size:11pt}
+  .pri .ds,.pri .ac{font-size:9pt}
+  .pattern{padding:4mm 5mm;margin-top:5mm;border-left-width:2.5pt}
+  .pattern .t{font-size:12pt}
+  .pattern .d{font-size:9.5pt}
+  .legend{font-size:8pt;margin-top:4mm;gap:8mm}
+  .cover .page-body{justify-content:flex-start}
+  .cover-mid{padding-top:36mm}
+  .cover-foot{margin-top:auto}
+
+  /* 表格 */
+  table{font-size:9.5pt;break-inside:auto}
+  th{font-size:7.5pt;padding:2.2mm 2mm;background:#EEF2F2}
+  td{padding:1.9mm 2mm;border-bottom:.4pt solid var(--line-soft)}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  .lv{font-size:7.5pt;padding:.6mm 2mm}
+  table.acts{font-size:8.8pt;margin-top:1.6mm}
+  table.acts th{font-size:7.5pt}
+  table.acts td.res{font-size:8.5pt;line-height:1.5}
+
+  /* 建議區塊 */
+  .rec{break-inside:avoid;page-break-inside:avoid;margin-bottom:4.5mm;padding-left:4mm;border-left-width:2.5pt}
+  .rec h3{font-size:11pt;margin-bottom:.8mm}
+  .rec .diag{font-size:9.2pt;margin-bottom:1.4mm}
+  .kpi{font-size:7.8pt;margin-top:1.4mm}
+  .note{font-size:8.5pt;margin-top:3mm}
+  .ref{font-size:9.5pt}
+  .disclaimer{font-size:9.5pt;padding-left:4mm;border-left-width:2.5pt}
+
+  /* 圖表 */
+  .chart-wrap svg{width:100%;height:auto;max-height:190mm}
+
+  /* 署名欄 */
+  .sign-grid{gap:9mm 12mm}
+  .sign-f label{font-size:8pt}
+  .sign-f input{font-size:11pt;border-bottom:.8pt solid var(--ink);padding:1.5mm 0}
+  input::placeholder{color:transparent!important;opacity:0!important}
+  .sign-box{border:.6pt solid var(--line);padding:4mm 5mm}
+  .sign-box .cap{font-size:8pt}
+  .sign-line{height:16mm;border-bottom:.8pt solid var(--ink)}
 }
 </style>
 
-<div class="print-band" id="print-head"><span id="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="r" id="ph-r"></span></div>
-<div class="print-band" id="print-foot"><span id="pf-l">機密文件 · 僅供受評單位與輔導單位內部使用</span><span class="r" id="pf-r"></span></div>
 <div class="wrap">
 
 <!-- ============ 封面 ============ -->
@@ -211,71 +312,142 @@ table.acts td.res{color:var(--ink-soft);font-size:13px}
 
 <!-- ============ 結果 ============ -->
 <section id="s-result" class="panel hidden">
-  <p class="eyebrow">Porter's Five Forces · 診斷結果</p>
-  <div class="head-result">
+
+<!-- ── P1 封面 ── -->
+<div class="rpt-page cover">
+  <div class="page-body">
     <div>
-      <h1 style="font-size:30px;margin-bottom:6px" id="r-title">產業結構診斷報告</h1>
-      <p class="meta-line" id="r-meta"></p>
+      <p class="eyebrow">Porter's Five Forces · Industry Structure Diagnostic</p>
+      <div class="rule-thick"></div>
     </div>
-    <div style="text-align:right">
-      <div class="score-big"><span id="r-index">0.0</span><span> / 5.0</span></div>
-      <div class="meta-line">產業吸引力指數</div>
+    <div class="cover-mid">
+      <h1 class="cover-title">產業結構診斷報告</h1>
+      <p class="cover-sub">五力壓力量測 · Five Forces Assessment</p>
+      <table class="cover-tbl"><tbody id="cover-tbl"></tbody></table>
+    </div>
+    <div class="cover-foot">
+      <div class="cover-idx">
+        <span class="lbl">產業吸引力指數</span>
+        <span class="val" id="c-index">—</span><span class="of">／ 5.00</span>
+      </div>
+      <p class="cover-verdict" id="c-verdict"></p>
+      <p class="confid">機密文件 · 僅供受評單位與輔導單位內部使用</p>
     </div>
   </div>
-  <p class="verdict" id="r-verdict"></p>
-  <p class="lede" id="r-verdict-desc" style="margin-bottom:0"></p>
+</div>
 
-  <div class="sect pagebreak">
-    <div class="sect-h"><span class="no">01</span><h2>五力壓力羅盤</h2></div>
-    <div id="chart-forces"></div>
-    <p class="note">箭頭粗細與色彩對應壓力強度；中央為現有競爭強度，四方為其餘四力。</p>
-  </div>
+<!-- ── P2 診斷摘要 ── -->
 
-  <div class="sect">
-    <div class="sect-h"><span class="no">02</span><h2>壓力強度雷達圖</h2></div>
-    <div id="chart-radar"></div>
-    <p class="note">虛線環為判讀門檻：內環 2.5（中度起點）、外環 3.5（高壓力起點）。</p>
-  </div>
-
-  <div class="sect">
-    <div class="sect-h"><span class="no">03</span><h2>各力評分明細</h2></div>
+<!-- ── P2 診斷摘要 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">01</span><h2>診斷摘要</h2></div>
+    <div class="head-result">
+      <div>
+        <p class="verdict" id="r-verdict"></p>
+        <p class="lede" id="r-verdict-desc" style="margin-bottom:0"></p>
+      </div>
+      <div class="idx-box">
+        <div class="score-big"><span id="r-index">—</span><span>／5.00</span></div>
+        <div class="meta-line">產業吸引力指數</div>
+      </div>
+    </div>
+    <div class="sect-h" style="margin-top:26px"><span class="no">02</span><h2>各力評分明細</h2></div>
     <div id="tbl-scores"></div>
+    <p class="note" id="r-meta"></p>
+    <div class="sect-h" style="margin-top:26px"><span class="no">03</span><h2>優先處理課題</h2></div>
+    <div class="pri-grid" id="priority"></div>
   </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 2 頁／共 9 頁</span></div>
+</div>
 
-  <div class="sect pagebreak">
-    <div class="sect-h"><span class="no">04</span><h2>初步策略建議</h2></div>
-    <div id="recs"></div>
+<!-- ── P3 五力壓力羅盤 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">04</span><h2>五力壓力羅盤</h2></div>
+    <div id="chart-forces" class="chart-wrap"></div>
+    <p class="note">箭頭粗細與色彩對應壓力強度；中央為現有競爭強度，四方為其餘四力。</p>
+    <div class="legend">
+      <span><i style="background:#2E7D6B"></i>低壓力 ≤ 2.4</span>
+      <span><i style="background:#C08A1E"></i>中度 2.5–3.4</span>
+      <span><i style="background:#B33D2E"></i>高壓力 ≥ 3.5</span>
+    </div>
+    <div class="pattern" id="pattern"></div>
   </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 3 頁／共 9 頁</span></div>
+</div>
 
-  <div class="sect pagebreak">
-    <div class="sect-h"><span class="no">05</span><h2>報告署名</h2></div>
+<!-- ── P4 壓力強度雷達圖 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">05</span><h2>壓力強度雷達圖</h2></div>
+    <div id="chart-radar" class="chart-wrap"></div>
+    <p class="note">虛線環為判讀門檻：內環 2.5（中度起點）、外環 3.5（高壓力起點）。實線多邊形愈外擴，代表結構壓力愈大。</p>
+    <div style="margin-top:20px"><div id="gap-table"></div></div>
+  </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 4 頁／共 9 頁</span></div>
+</div>
+
+<!-- ── P5 策略建議 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">06</span><h2>初步策略建議</h2></div>
+    <div id="recs-lead"></div>
+    <div id="recs-a"></div>
+  </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 5 頁／共 9 頁</span></div>
+</div>
+
+<!-- ── P6 策略建議（續） ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">06</span><h2>初步策略建議（續）</h2></div>
+    <div id="recs-b"></div>
+  </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 6 頁／共 9 頁</span></div>
+</div>
+
+<!-- ── P7 報告署名 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">07</span><h2>報告署名</h2></div>
     <div class="sign-grid">
       <div class="sign-f"><label>診斷顧問</label><input id="sg1" type="text" placeholder="姓名"></div>
-      <div class="sign-f"><label>所屬單位／職稱</label><input id="sg2" type="text" placeholder="例：財團法人○○發展中心 · 產業顧問"></div>
+      <div class="sign-f"><label>所屬單位／職稱</label><input id="sg2" type="text" placeholder="單位 · 職稱"></div>
       <div class="sign-f"><label>複核主管</label><input id="sg3" type="text" placeholder="姓名／職稱"></div>
       <div class="sign-f"><label>報告日期</label><input id="sg4" type="text" placeholder="民國 ○○○ 年 ○ 月 ○ 日"></div>
       <div class="sign-f"><label>受評單位確認人</label><input id="sg5" type="text" placeholder="姓名／職稱"></div>
-      <div class="sign-f"><label>診斷案號／計畫名稱</label><input id="sg6" type="text" placeholder="例：115 年度○○產業輔導計畫"></div>
+      <div class="sign-f"><label>診斷案號／計畫名稱</label><input id="sg6" type="text" placeholder="計畫或案號"></div>
     </div>
-    <div class="sign-grid" style="margin-top:8px">
+    <div class="sign-grid" style="margin-top:26px">
       <div class="sign-box"><span class="cap">診斷顧問簽章</span><div class="sign-line"></div></div>
       <div class="sign-box"><span class="cap">受評單位代表簽章</span><div class="sign-line"></div></div>
     </div>
+    <p class="note" style="margin-top:22px">本報告經雙方簽章後生效，作為後續輔導規劃與成果驗收之依據。</p>
   </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 7 頁／共 9 頁</span></div>
+</div>
 
-  <div class="sect pagebreak">
-    <div class="sect-h"><span class="no">06</span><h2>分析方法與資料來源</h2></div>
-
-    <h3 style="font-family:var(--serif);font-size:16px;margin:14px 0 6px">一、分析架構依據</h3>
+<!-- ── P8 方法論 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">08</span><h2>分析方法與資料來源</h2></div>
+    <h3 class="sub">一、分析架構依據</h3>
     <ul class="ref">
       <li>Porter, M. E. (1979). How Competitive Forces Shape Strategy. <i>Harvard Business Review</i>, 57(2), 137–145.</li>
       <li>Porter, M. E. (1980). <i>Competitive Strategy: Techniques for Analyzing Industries and Competitors</i>. New York: Free Press.</li>
       <li>Porter, M. E. (2008). The Five Competitive Forces That Shape Strategy. <i>Harvard Business Review</i>, 86(1), 25–40.</li>
     </ul>
-
-    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">二、量測設計與計分方法</h3>
+    <h3 class="sub">二、量測設計與計分方法</h3>
     <table>
-      <tr><th style="width:22%">項目</th><th>說明</th></tr>
+      <tr><th style="width:24%">項目</th><th>說明</th></tr>
       <tr><td>量測構面</td><td>Porter 五力，各力設 5 項驅動因子，合計 25 項評分題；另設 5 題分析邊界設定題（不計分）</td></tr>
       <tr><td>量表</td><td>五點語意錨定量表，方向統一為「分數愈高＝該力對業者的壓力愈大」</td></tr>
       <tr><td>單力分數</td><td>該力 5 項驅動因子之算術平均（預設等權）</td></tr>
@@ -283,11 +455,18 @@ table.acts td.res{color:var(--ink-soft);font-size:13px}
       <tr><td>判讀門檻</td><td>≤ 2.4 低壓力｜2.5–3.4 中度｜≥ 3.5 高壓力</td></tr>
       <tr><td>建議生成</td><td>規則式對應（5 力 × 3 級壓力＝15 組建議），非統計推論或預測模型</td></tr>
     </table>
-
-    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">三、本次評分資料來源</h3>
+    <h3 class="sub">三、本次評分資料來源</h3>
     <div id="src-table"></div>
+  </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 8 頁／共 9 頁</span></div>
+</div>
 
-    <h3 style="font-family:var(--serif);font-size:16px;margin:18px 0 6px">四、建議補充之外部佐證來源</h3>
+<!-- ── P9 佐證與免責 ── -->
+<div class="rpt-page">
+  <div class="page-head"><span class="ph-l">產業結構診斷報告｜Porter 五力分析</span><span class="ph-r"></span></div>
+  <div class="page-body">
+    <div class="sect-h"><span class="no">08</span><h2>分析方法與資料來源（續）</h2></div>
+    <h3 class="sub">四、建議補充之外部佐證來源</h3>
     <table>
       <tr><th style="width:30%">佐證類型</th><th>建議查證來源</th></tr>
       <tr><td>產業規模與家數</td><td>經濟部統計處工業及服務業普查、財政部財政資訊中心營利事業家數統計</td></tr>
@@ -296,9 +475,11 @@ table.acts td.res{color:var(--ink-soft);font-size:13px}
       <tr><td>進出口與市場動向</td><td>財政部關務署進出口貿易統計、國貿署貿易統計資料庫</td></tr>
       <tr><td>法規與政策門檻</td><td>全國法規資料庫、主管機關公告與許可辦法</td></tr>
     </table>
-
-    <p class="disclaimer">本報告之五力評分係由受評單位或訪視顧問依現況<b>主觀自評</b>產生，屬結構性初步判讀，不構成投資、財務或法律建議。正式輔導建議、投資決策或標案評估之引用，應併同上述外部佐證來源、受評單位實際財務數據與同業標竿進行交叉驗證後定案。</p>
+    <h3 class="sub">五、限制與免責聲明</h3>
+    <p class="disclaimer">本報告之五力評分係由受評單位或訪視顧問依現況<b>主觀自評</b>產生，屬結構性初步判讀，不構成投資、財務或法律建議。報告中「所需資源」之人月數與「預估期程」為規劃層級參考值，須依受評單位規模、現有職能配置與資源條件調整後定案。正式輔導建議、投資決策或標案評估之引用，應併同前述外部佐證來源、受評單位實際財務數據與同業標竿進行交叉驗證後定案。</p>
   </div>
+  <div class="page-foot"><span>機密文件 · 僅供受評單位與輔導單位內部使用</span><span><span class="pf-d"></span> · 第 9 頁／共 9 頁</span></div>
+</div>
 
   <div class="actions no-print">
     <button class="btn" id="btn-pdf">輸出 PDF 報告</button>
@@ -513,32 +694,34 @@ function render(){
     inp.addEventListener("input",function(){ANS[it.id]=inp.value;saveDraft()});
     inp.addEventListener("keydown",function(e){if(e.key==="Enter")next()});
     box.appendChild(inp);
-    $("#q-hint").textContent="輸入後按 Enter 繼續";
+    $("#q-hint").style.color="";$("#q-hint").textContent="輸入後按 Enter 繼續（必填）";
     setTimeout(function(){inp.focus()},40);
   }else{
     for(var i=0;i<it.opts.length;i++)(function(i){
       var b=el("button","opt");b.type="button";
-      b.setAttribute("aria-pressed",String(ANS[it.id]===i+1));
+      b.setAttribute("aria-pressed",String(selIdx(it)===i+1));
       var n=el("span","num",String(i+1));
       var s=el("span",null,it.opts[i]);
       b.appendChild(n);b.appendChild(s);
       b.addEventListener("click",function(){pick(i+1)});
       box.appendChild(b);
     })(i);
-    $("#q-hint").textContent="按數字鍵 1–"+it.opts.length+" 可快速作答";
+    $("#q-hint").style.color="";$("#q-hint").textContent="按數字鍵 1–"+it.opts.length+" 可快速作答";
   }
   $("#btn-prev").disabled=(idx===0);
   $("#btn-next").textContent=(idx===QUEUE.length-1)?"產生診斷報告":"下一題";
 }
 
 function pick(v){
-  var it=QUEUE[idx];ANS[it.id]=v;saveDraft();
+  var it=QUEUE[idx];ANS[it.id]=(it.kind==="b")?it.opts[v-1]:v;saveDraft();
   var bs=$("#q-opts").children;
   for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(i+1===v));
   setTimeout(next,240);
 }
 function next(){
   var it=QUEUE[idx];
+  if(it.type==="text"&&!(ANS[it.id]||"").trim()){
+    var hn=$("#q-hint");hn.textContent="此欄為報告必填項目，請先填寫後再繼續";hn.style.color="#B33D2E";return;}
   if(it.type!=="text"&&!ANS[it.id])return;
   if(idx===QUEUE.length-1){showResult();return}
   idx++;render();
@@ -556,6 +739,8 @@ document.addEventListener("keydown",function(e){
 });
 
 /* ---------- 計分 ---------- */
+function selIdx(it){var a=ANS[it.id];if(a===undefined||a==="")return 0;
+  return (it.kind==="b")?(it.opts.indexOf(a)+1):a;}
 function level(v){return v>=3.5?"high":(v>=2.5?"mid":"low")}
 function levelText(l){return l==="high"?"高壓力":(l==="mid"?"中度":"低壓力")}
 function levelColor(l){return l==="high"?C.high:(l==="mid"?C.mid:C.low)}
@@ -641,6 +826,19 @@ function drawRadar(R){
   return s;
 }
 
+/* ---------- 結構形態判定 ---------- */
+var PATTERN={
+ entrants:{t:"門檻鬆動型結構",d:"壓力集中於新進入者。管理意涵：既有優勢的保護期有限，須在門檻完全瓦解前，將既有客戶關係、規模與認證資格轉換為結構性障礙。"},
+ suppliers:{t:"上游主導型結構",d:"壓力集中於供應端。管理意涵：獲利穩定度受制於關鍵料件與供應商，應優先處理供應來源分散與轉換成本，而非在下游價格上讓步。"},
+ buyers:{t:"買方主導型結構",d:"壓力集中於客戶端。管理意涵：價格壓力源自客戶議價力而非同業競爭，單純降價無法改善結構，須從客戶結構分散與轉換成本設計著手。"},
+ substitutes:{t:"替代衝擊型結構",d:"壓力集中於替代方案。管理意涵：威脅來自產業之外，同業標竿的參考價值有限，須回到客戶真正要完成的工作重新界定產品範疇。"},
+ rivalry:{t:"同質競爭型結構",d:"壓力集中於既有同業。管理意涵：利潤被競爭稀釋而非被上下游擠壓，關鍵在於建立非價格競爭軸線，並選擇性退出無獲利的戰場。"}};
+function patternOf(sorted){
+  if(sorted[0].score-sorted[4].score<0.6)
+    return {t:"結構均衡型",d:"五力壓力分布平均，無單一主導力量。管理意涵：不宜將資源押注於單點，宜以整體營運效率與成本結構作為競爭基礎，並持續監測是否有單一力量快速升高。"};
+  return PATTERN[sorted[0].key];
+}
+
 /* ---------- 結果頁 ---------- */
 function showResult(){
   var R=compute();
@@ -650,61 +848,113 @@ function showResult(){
 
   var name=(ANS.b1||"未具名單位").trim();
   var ind=(ANS.b2||"未界定產業").trim();
-  $("#r-title").textContent=name+"｜產業結構診斷報告";
   var d=new Date();
   var dstr=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-  $("#r-meta").textContent=["產業定義："+ind,"範圍："+(ANS.b3||"—"),"價值鏈："+(ANS.b4||"—"),"視角："+(ANS.b5||"—"),
-    "製表 "+dstr].join(" · ");
-  $("#r-index").textContent=R.index.toFixed(1);
   var v=VERDICT.filter(function(x){return R.index>=x.min})[0];
+  var sorted=R.forces.slice().sort(function(a,b){return b.score-a.score});
+
+  /* 封面 */
+  $("#cover-tbl").innerHTML=
+     '<tr><th>受評單位</th><td>'+name+'</td></tr>'
+    +'<tr><th>產業定義</th><td>'+ind+'</td></tr>'
+    +'<tr><th>市場地理範圍</th><td>'+(ANS.b3||"—")+'</td></tr>'
+    +'<tr><th>價值鏈位置</th><td>'+(ANS.b4||"—")+'</td></tr>'
+    +'<tr><th>分析時間視角</th><td>'+(ANS.b5||"—")+'</td></tr>'
+    +'<tr><th>製表日期</th><td>'+dstr+'</td></tr>';
+  $("#c-index").textContent=R.index.toFixed(2);
+  $("#c-verdict").textContent=v.t;
+
+  /* 摘要頁 */
+  $("#r-index").textContent=R.index.toFixed(2);
   $("#r-verdict").textContent=v.t;
   $("#r-verdict-desc").textContent=v.d;
+  $("#r-meta").textContent="五力平均壓力 "+R.avg.toFixed(2)+"；產業吸引力指數 "+R.index.toFixed(2)
+    +"（＝6 −五力平均）。判讀門檻：≤ 2.4 低壓力｜2.5–3.4 中度｜≥ 3.5 高壓力。";
 
+  /* 頁首頁尾 */
+  var hs=document.querySelectorAll(".ph-r");
+  for(var a=0;a<hs.length;a++)hs[a].textContent=name+"｜"+ind;
+  var fs=document.querySelectorAll(".pf-d");
+  for(var b=0;b<fs.length;b++)fs[b].textContent="製表 "+dstr;
+
+  /* 圖表 */
   $("#chart-forces").innerHTML=drawForces(R);
   $("#chart-radar").innerHTML=drawRadar(R);
 
-  var sorted=R.forces.slice().sort(function(a,b){return b.score-a.score});
-  var h='<table><tr><th style="width:24%">五力構面</th><th>壓力最高之驅動因子</th><th style="width:12%">分數</th><th style="width:14%">判讀</th><th style="width:12%">優先序</th></tr>';
+  /* 評分明細 */
+  var t='<table><tr><th style="width:24%">五力構面</th><th>壓力最高之驅動因子</th><th style="width:11%;text-align:right">分數</th><th style="width:13%">判讀</th><th style="width:11%;text-align:right">優先序</th></tr>';
   for(var i=0;i<R.forces.length;i++){
     var f=R.forces[i];
-    var top=f.items.slice().sort(function(a,b){return b.v-a.v})[0];
-    var rank=sorted.indexOf(f)+1;
-    h+='<tr><td style="font-weight:700">'+f.name+'</td><td>'+top.d+'（'+top.v+' 分）</td>'+
-       '<td class="n">'+f.score.toFixed(2)+'</td>'+
-       '<td><span class="lv" style="background:'+levelColor(f.lv)+'">'+levelText(f.lv)+'</span></td>'+
-       '<td class="n">'+rank+'</td></tr>';
+    var top=f.items.slice().sort(function(x,y){return y.v-x.v})[0];
+    t+='<tr><td style="font-weight:700">'+f.name+'</td><td>'+top.d+'（'+top.v+' 分）</td>'
+      +'<td class="n">'+f.score.toFixed(2)+'</td>'
+      +'<td><span class="lv" style="background:'+levelColor(f.lv)+'">'+levelText(f.lv)+'</span></td>'
+      +'<td class="n">'+(sorted.indexOf(f)+1)+'</td></tr>';
   }
-  h+='<tr><td colspan="2" style="font-weight:700">五力平均壓力／產業吸引力指數</td><td class="n" style="font-weight:700">'+R.avg.toFixed(2)+'</td><td colspan="2" class="n" style="font-weight:700">'+R.index.toFixed(2)+' / 5.00</td></tr></table>';
-  $("#tbl-scores").innerHTML=h;
+  t+='<tr class="total"><td colspan="2">五力平均壓力／產業吸引力指數</td><td class="n">'+R.avg.toFixed(2)
+    +'</td><td colspan="2" class="n">'+R.index.toFixed(2)+' ／ 5.00</td></tr></table>';
+  $("#tbl-scores").innerHTML=t;
 
-  var rec="";
-  rec+='<p class="lede" style="margin-bottom:18px">最大結構壓力來自<b>'+sorted[0].name+'</b>（'+sorted[0].score.toFixed(2)+'）與<b>'+sorted[1].name+'</b>（'+sorted[1].score.toFixed(2)+'），建議列為首要處理課題；相對優勢為<b>'+sorted[4].name+'</b>（'+sorted[4].score.toFixed(2)+'），可作為策略施力支點。</p>';
-  for(var j=0;j<sorted.length;j++){
-    var F=sorted[j],r=RECS[F.key][F.lv],col=levelColor(F.lv);
-    rec+='<div class="rec" style="border-left-color:'+col+'">';
-    rec+='<h3>'+(j+1)+'. '+F.name+' — '+levelText(F.lv)+'（'+F.score.toFixed(2)+'）</h3>';
-    rec+='<p class="diag">'+r.d+'</p>';
-    rec+='<table class="acts"><tr><th style="width:46%">建議行動</th><th style="width:34%">所需資源（規劃參考）</th><th style="width:20%">預估期程</th></tr>';
-    for(var k=0;k<r.a.length;k++){
-      rec+='<tr><td>'+r.a[k][0]+'</td><td class="res">'+r.a[k][1]+'</td><td class="res">'+r.a[k][2]+'</td></tr>';
-    }
-    rec+='</table><p class="kpi">建議追蹤指標：'+F.kpi.join('｜')+'</p></div>';
+  /* 策略建議：導言 + 分三頁 */
+  $("#recs-lead").innerHTML='<p class="lede" style="margin-bottom:10px">最大結構壓力來自<b>'+sorted[0].name+'</b>（'
+    +sorted[0].score.toFixed(2)+'）與<b>'+sorted[1].name+'</b>（'+sorted[1].score.toFixed(2)
+    +'），建議列為首要處理課題；相對優勢為<b>'+sorted[4].name+'</b>（'+sorted[4].score.toFixed(2)
+    +'），可作為策略施力支點。以下依壓力高低排序。</p>';
+  function block(F,rank){
+    var r=RECS[F.key][F.lv],col=levelColor(F.lv),s='';
+    s+='<div class="rec" style="border-left-color:'+col+'">';
+    s+='<h3>'+rank+'. '+F.name+' — '+levelText(F.lv)+'（'+F.score.toFixed(2)+'）</h3>';
+    s+='<p class="diag">'+r.d+'</p>';
+    s+='<table class="acts"><tr><th style="width:42%">建議行動</th><th style="width:35%">所需資源（規劃參考）</th><th style="width:23%">預估期程</th></tr>';
+    for(var k=0;k<r.a.length;k++)s+='<tr><td>'+r.a[k][0]+'</td><td class="res">'+r.a[k][1]+'</td><td class="res">'+r.a[k][2]+'</td></tr>';
+    s+='</table><p class="kpi">建議追蹤指標：'+F.kpi.join('｜')+'</p></div>';
+    return s;
   }
-  var sb='<table><tr><th style="width:30%">項目</th><th>內容</th></tr>';
-  sb+='<tr><td>受評單位</td><td>'+name+'</td></tr>';
-  sb+='<tr><td>產業定義</td><td>'+ind+'</td></tr>';
-  sb+='<tr><td>市場地理範圍</td><td>'+(ANS.b3||'—')+'</td></tr>';
-  sb+='<tr><td>價值鏈位置</td><td>'+(ANS.b4||'—')+'</td></tr>';
-  sb+='<tr><td>分析時間視角</td><td>'+(ANS.b5||'—')+'</td></tr>';
-  sb+='<tr><td>評分方式</td><td>受評者自評（一問一答，25 題全數作答）</td></tr>';
-  sb+='<tr><td>評分完成日</td><td>'+dstr+'</td></tr></table>';
-  $("#src-table").innerHTML=sb;
-  if(!viewingSaved){putCase({name:name,ind:ind,index:R.index.toFixed(2),ans:JSON.parse(JSON.stringify(ANS)),ts:Date.now()});
+  $("#recs-a").innerHTML=block(sorted[0],1)+block(sorted[1],2)+block(sorted[2],3);
+  $("#recs-b").innerHTML=block(sorted[3],4)+block(sorted[4],5)
+    +'<p class="note">「所需資源」之人月數與「預估期程」為規劃層級參考值，須依受評單位規模、現有職能配置與資源條件調整後定案。</p>';
+
+  /* 資料來源 */
+  $("#src-table").innerHTML='<table><tr><th style="width:30%">項目</th><th>內容</th></tr>'
+    +'<tr><td>受評單位</td><td>'+name+'</td></tr>'
+    +'<tr><td>產業定義</td><td>'+ind+'</td></tr>'
+    +'<tr><td>市場地理範圍</td><td>'+(ANS.b3||"—")+'</td></tr>'
+    +'<tr><td>價值鏈位置</td><td>'+(ANS.b4||"—")+'</td></tr>'
+    +'<tr><td>分析時間視角</td><td>'+(ANS.b5||"—")+'</td></tr>'
+    +'<tr><td>評分方式</td><td>受評者自評（一問一答，25 題全數作答）</td></tr>'
+    +'<tr><td>評分完成日</td><td>'+dstr+'</td></tr></table>';
+
+  /* 優先處理課題 */
+  var pri='';
+  for(var q=0;q<2;q++){
+    var F=sorted[q],r=RECS[F.key][F.lv],col=levelColor(F.lv);
+    pri+='<div class="pri" style="border-top-color:'+col+'">';
+    pri+='<span class="rk">PRIORITY '+(q+1)+'</span>';
+    pri+='<p class="nm">'+F.name+'</p>';
+    pri+='<span class="sc" style="color:'+col+'">'+F.score.toFixed(2)+'</span> <span class="lv" style="background:'+col+'">'+levelText(F.lv)+'</span>';
+    pri+='<p class="ds">'+r.d+'</p>';
+    pri+='<p class="ac"><b>首要行動</b>'+r.a[0][0]+'（'+r.a[0][2]+'）</p></div>';
+  }
+  $("#priority").innerHTML=pri;
+
+  /* 結構形態 */
+  var pt=patternOf(sorted);
+  $("#pattern").innerHTML='<p class="t">本次結構形態：'+pt.t+'</p><p class="d">'+pt.d+'</p>';
+
+  /* 門檻差距 */
+  var gt='<table><tr><th style="width:26%">五力構面</th><th style="width:12%;text-align:right">分數</th><th style="width:14%">判讀</th><th style="width:24%;text-align:right">距高壓門檻 3.5</th><th style="width:24%;text-align:right">距低壓門檻 2.4</th></tr>';
+  for(var g=0;g<sorted.length;g++){
+    var G=sorted[g],dh=3.5-G.score,dl=G.score-2.4;
+    gt+='<tr><td style="font-weight:700">'+G.name+'</td><td class="n">'+G.score.toFixed(2)+'</td>'
+      +'<td><span class="lv" style="background:'+levelColor(G.lv)+'">'+levelText(G.lv)+'</span></td>'
+      +'<td class="n">'+(Math.abs(dh)<0.005?'位於門檻':(dh>0?('尚有 '+dh.toFixed(2)):('已逾越 '+Math.abs(dh).toFixed(2))))+'</td>'
+      +'<td class="n">'+(Math.abs(dl)<0.005?'位於門檻':(dl>0?('高出 '+dl.toFixed(2)):('低於 '+Math.abs(dl).toFixed(2))))+'</td></tr>';
+  }
+  $("#gap-table").innerHTML=gt+'</table>';
+
+  if(!viewingSaved){putCase({name:name,ind:ind,index:R.index.toFixed(2),
+    ans:JSON.parse(JSON.stringify(ANS)),ts:Date.now()});
     ls(function(){localStorage.removeItem(K_DRAFT)});renderCases();}
-  $("#ph-r").textContent=name+"｜"+ind;
-  $("#pf-r").textContent="製表 "+dstr;
-  rec+='<p class="note">「所需資源」之人月數與「預估期程」為規劃層級參考值，須依受評單位規模、現有職能配置與資源條件調整後定案。</p>';
-  $("#recs").innerHTML=rec;
 }
 
 /* ---------- 匯出 ---------- */
